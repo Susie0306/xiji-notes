@@ -63,6 +63,7 @@ export function ModeToolbarButton(props: DropdownMenuProps) {
           onValueChange={(newValue) => {
             if (newValue === 'viewing') {
               setReadOnly(true);
+              editor.setOption(SuggestionPlugin, 'isSuggesting', false);
 
               return;
             }
