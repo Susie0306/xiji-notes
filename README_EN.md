@@ -1,22 +1,56 @@
-# Xiji (熙记) - Protecting every small wish through notes
+# Xiji (熙记) | Real-time Collaborative + AI-assisted Writing Platform Based on Next.js
+
+🏆2025 ByteDance Engineering Bootcamp Top 30 Project
 
 [English](./README_EN.md) | [简体中文](./README.md)
 
-**Xiji (熙记)** is a modern note platform centered on both emotional needs and practical utility. With the mission of **“protecting every small wish through notes”**, it builds a product ecosystem that balances functionality and warmth.
+**Xiji (熙记)** aims to build a next-generation note-taking platform with real-time collaboration, offline synchronization, and AI assistance through modern web technologies.
 
-Xiji is not only a knowledge note tool, but also an emotional carrier that safeguards users’ life wishes. Through practical baseline features, emotionally designed special modules, and convenient cross-device sync, every record becomes meaningful — every small wish can be seen, tracked, and achieved — aiming to become the “witness of your beautiful moments.”
+Project Highlights:
+- Rich text editor engineering
+- Local-first data synchronization
+- Multi-user real-time collaboration
+- AI application frontend architecture
 
-From a technical perspective, the project is built on **Next.js 14 (App Router)**, deeply integrating a smooth **Local-First** experience with **Real-Time Collaboration**, showcasing technical depth in complex state management, offline synchronization, and rich text customization.
+Tech Stack: Next.js 14 · TypeScript · Plate.js · Liveblocks · Prisma · IndexedDB · Vercel AI SDK
+
+## 🤩 Preview
+
+### Login Page
+<div align="center">
+<img src="./packages/editor/src/preview/登录页.png" alt="Login Page" width="600">
+</div>
+
+### Home Page
+<div align="center">
+<img src="./packages/editor/src/preview/首页.png" alt="Home Page" width="600">
+</div>
+
+### Note Page
+<div align="center">
+<img src="./packages/editor/src/preview/全部笔记.png" alt="All Notes" width="600">
+</div>
+
+### Editor
+<div align="center">
+<img src="./packages/editor/src/preview/编辑器.png" alt="Editor" width="600">
+</div>
+
+### AI Features
+<div align="center">
+<img src="./packages/editor/src/preview/ai.png" alt="AI Features" width="600">
+</div>
 
 ## ✨ Core Features
 
-- **📝 Powerful Rich Text Editor**: Built on Plate.js (Slate), supporting Markdown syntax, Slash Commands, code block highlighting, and media embedding.
-- **🤝 Real-Time Collaborative Editing**: Multiple users editing the same document simultaneously, with synchronized updates (Powered by Liveblocks Storage API).
-- **⚡️ Local-First & Offline Support**: Uses IndexedDB for local storage, remaining usable offline, and automatically synchronizing data via a Sync Queue upon network recovery.
+- **📦 Modular Rich Text Editor (@susie/editor)**: Core editor functionality extracted as an independent npm package @susie/editor, supporting multi-entry export and on-demand loading.
+- **🤝 Real-time Collaborative Editing**: Multiple users editing the same document simultaneously with synchronized updates (Powered by Liveblocks Storage API).
+- **⚡️ Local-first & Offline Support**: Uses IndexedDB for local storage, remaining usable offline, and automatically synchronizing data via a Sync Queue upon network recovery.
 - **🤖 AI Intelligent Assistance**: Combines custom DeepSeek integration for advanced commands like polishing and summarization.
-- **📂 Flexible Organization Structure**: Supports infinite nested folders and a many-to-many tag classification system.
-- **🌟 “Little Wishes” Board**: A dedicated wish-tracking module with timeline notes. Set target milestones and deadlines (e.g., “Learn guitar in 3 months”), and visualize progress with built-in templates (travel planning, study goals, etc.), giving every small expectation a place to settle.
-- **💊 Memory Capsule**: A unique time-delivery feature. When the set time arrives, you will receive a warm reminder to revisit past wishes and feel the growth and beauty in the flow of time.
+- **📱 Mobile Support**: Provides Android App version with real-time collaborative editing on mobile.
+- **📝 Powerful Rich Text Editor**: Built on Plate.js (Slate), supporting Markdown syntax, Slash Commands, code block highlighting, and media embedding.
+- **📂 Flexible Organization Structure**: Supports infinite nested folders and many-to-many tag classification system.
+- **🌟 Other Xiji Features**: "Little Wishes" module: Supports creating wish notes with timelines, visualizing wish achievement process. Memory Capsule: Unique time-delivery feature.
 
 ## 📱 Mobile Experience (Android App)
 
@@ -25,12 +59,6 @@ To make recording accessible anytime, anywhere, Xiji is now available on Android
 - **🔄 Seamless Sync**: Real-time cloud synchronization between desktop and mobile.
 - **🎨 Immersive Design**: Optimized gestures and responsive layout, supporting immersive status bars and notch adaptation.
 - **🔐 Native Auth**: Integrated with Clerk authentication for smooth in-app login without jumping to external browsers.
-
-### 📥 Download & Install
-
-1. Click **Releases** in the right sidebar.
-2. Download the latest `.apk` package (`Xiji-v1.0.0.apk`).
-3. Send it to your phone for installation (allow "Install from unknown sources" if prompted).
 
 ## 🛠 Tech Stack
 
@@ -46,7 +74,7 @@ To make recording accessible anytime, anywhere, Xiji is now available on Android
 
 - **Rich Text Engine**: Plate.js / Slate.js
 - **Editor Package**: `@susie/editor` (Standalone npm package, supporting modular import)
-- **Real-Time Collaboration**: Liveblocks (Storage API)
+- **Real-time Collaboration**: Liveblocks (Storage API)
 - **State Management**: Zustand (Global), React Context (Local)
 
 ### Offline & Storage
@@ -63,75 +91,94 @@ To make recording accessible anytime, anywhere, Xiji is now available on Android
 
 ---
 
-## 💡 Technical Highlights & Challenges Resolved
+## 💡 Technical Highlights & Challenge Analysis
 
-### 1. Hybrid Real-time Collaboration
+### 1. Modular Rich Text Editor Design (@susie/editor)
 
-This project does not simply apply a collaboration library, but solves a core challenge: **How to seamlessly switch between "Local-Only Editing" and "Multi-User Real-Time Collaboration" modes.**
+**Challenge:**  
+As editing capabilities expand, editor functionality and business code gradually couple, increasing reuse and maintenance costs.
 
-- **Challenge**: Desynchronization between Plate.js/Slate's internal state (`Value`) and Liveblocks' shared storage (`Storage`) can lead to infinite loops or content flickering.
-- **Solution**:
-  - Implemented precise **bi-directional binding control** in `components/editor/plate-editor.tsx`.
-  - Used `useStorage` to subscribe to remote changes and `useMutation` to submit local changes.
-  - Introduced an `isApplyingRemoteChangeRef` lock mechanism to precisely distinguish "user input" from "remote sync", preventing update loops.
-  - Implemented dual protection mechanisms of Debounce and Polling to ensure data consistency in weak network environments.
+**Solution:**
+- Extract core editor capabilities built on Plate.js into an independent npm package, decoupling editing capabilities from business applications.
+- Design multi-entry modular architecture, supporting on-demand import of basic editing, feature plugins, collaboration capabilities, and UI components.
+- Build ESM modules based on tsup, optimize package size through Tree-shaking; decouple AI capabilities from specific business logic using dependency injection.
 
-### 2. Local-First & Offline Sync Queue
+**Effect:**
+Decouples editor capabilities from business applications, forming an independent npm package, supporting 58 functional modules for on-demand loading, improving code reusability and subsequent expansion efficiency.
 
-To provide ultimate loading speed and offline availability, a complete offline synchronization strategy was implemented.
+### 2. Local-first Offline Sync Architecture (Local-first Sync)
 
-- **Architecture Design**:
-  - **Read Path**: Prioritizes reading data from IndexedDB for UI rendering, then Revalidates data in the background (`Lazy Sync`).
-  - **Write Path**: All operations (create/update/delete) are first written to local IndexedDB and **optimistically updated** on the UI.
-  - **Sync Manager (`SyncManager`)**:
-    - Maintains a log-based `syncQueue` (CREATE/UPDATE/DELETE) in `lib/indexeddb.ts`.
-    - Listens for `online/offline` events; automatically consumes the queue upon network recovery and batch syncs to PostgreSQL via Server Actions.
-    - Handles eventual consistency issues (such as mapping local IDs to server IDs).
+**Challenge:**  
+In weak network or offline environments, need to ensure user operation continuity and solve local data and server state consistency issues.
 
-### 3. Type-Safe System Design
+**Solution:**
+- Build local data layer based on IndexedDB, prioritize reading local data for UI rendering, and complete data synchronization in the background.
+- Self-develop SyncQueue operation queue, record user CRUD operations through optimistic updates, and automatically batch sync to server upon network recovery.
+- Design local ID and server ID mapping mechanism, handle state merging issues after offline data creation, ensuring final data consistency between client and server.
 
-Fully adopted TypeScript with strict type definitions, rejecting `any`.
+**Effect:**
+Achieves offline availability and online synchronization experience, improving data reliability in complex network environments.
 
-- **Prisma Type Extensions**: Defined complex types like `FolderWithCount` in `lib/types.ts` to solve the problem of complex return type inference in Prisma relation queries (`include` / `_count`).
-- **Editor Types**: Customized `MyEditor` type for Plate.js's complex plugin system, ensuring full code completion and type safety when writing custom plugins (such as AI plugins, media plugins).
+### 3. Rich Text Real-time Collaborative Editing (Real-time Collaboration)
 
-### 4. High-Performance Sidebar Navigation
+**Challenge:**  
+There are differences between Plate.js editor internal state and Liveblocks real-time storage model, easily causing sync loops, content flickering, and other issues.
 
-Refactored the sidebar component for scenarios with a large number of notes and folders.
+**Solution:**
+- Design bidirectional state control mechanism for local editing and remote synchronization, distinguishing user input and remote data updates.
+- Implement multi-user state synchronization based on Liveblocks, and optimize data transmission in high-frequency editing scenarios with debounce strategy.
+- Add synchronization protection mechanism for weak network environments, solving state conflicts and synchronization loops in multi-user editing scenarios, ensuring content and user state consistency.
 
-- **Optimization**:
-  - Optimized the original recursive component into a flattened data structure (`NavNode`) for processing, building the tree structure instantly on the frontend.
-  - Separated `MobileNavWrapper` from desktop logic, implementing state isolation under responsive layouts.
-  - Utilized Next.js `revalidatePath` combined with Optimistic UI to make folder creation/move operations feel latency-free.
+**Effect:**
+Achieves multi-user real-time editing capabilities, supporting stable collaboration experience in complex rich text scenarios.
 
-### 5. Modular Editor Package (`@susie/editor`)
+### 4. AI-assisted Writing and Frontend Engineering Integration
 
-To improve code reusability and maintainability, we stripped the core editor functionality into an independent npm package.
+**Challenge:**  
+AI capabilities need to be deeply integrated with editor interaction flow, while ensuring interface security and user experience.
 
-- **Architecture Design**:
-  - **Multi-Entry Export**: Supports independent imports for main entry (`@susie/editor`), feature modules (`@susie/editor/kits`), collaborative modules (`@susie/editor/collaborative`), and UI components (`@susie/editor/components`).
-  - **On-Demand Loading**: 58 functional Kit modules can be imported individually, such as `BasicBlocksKit`, `TableKit`, `MediaKit`, etc., supporting Tree-shaking to optimize bundle size.
-  - **Collaboration Optional**: Liveblocks related dependencies are set as `peerDependencies`, so they don't need to be installed when collaboration features are not required.
+**Solution:**
+- Integrate AI continuation, content polishing, and summary features based on Vercel AI SDK.
+- Use Server Actions to manage AI requests and key calls, converge streaming output processing logic to the server.
+- Design AI plugin interfaces combined with TypeScript type system, reducing coupling between AI capabilities and editor core logic.
 
-- **Technical Implementation**:
-  - Built using **tsup**, supporting ESM format output and TypeScript type declarations.
-  - Unified internal imports via path aliases (`@/`), automatically resolved by esbuild during build.
-  - AI features injected via `AIProvider` or props, decoupling dependencies on specific backends.
+**Effect:**
+Builds scalable AI editing capabilities, improving the usability of intelligent features in real editing scenarios.
 
-- **Usage Example**:
+## 🕸️ Architecture Diagram
+```mermaid
+flowchart TB
+    UI[User Interface]
+    Editor[Plate.js Editor]
 
-  ```tsx
-  // Full features
-  import { EditorKit, PlateEditor } from '@susie/editor'
-  // Collaborative features
-  import { RoomProvider } from '@susie/editor/collaborative'
-  // On-demand import
-  import { BasicBlocksKit, TableKit } from '@susie/editor/kits'
-  ```
+    subgraph LocalClient
+        LS[Local Storage<br/>IndexedDB]
+    end
+    subgraph Collaboration
+        LB[Liveblocks]
+    end
 
----
+    Sync[Sync Queue]
+    Server[Next.js Server Actions]
+    ORM[Prisma]
+    DB[(PostgreSQL)]
+
+    %% Connections
+    UI --> Editor
+    Editor --> LS
+    Editor --> LB
+    LS --> Sync
+    LB --> Sync
+    Sync --> Server
+    Server --> ORM
+    ORM --> DB
+```
 
 ## 🚀 Quick Start
+
+🌐 Live Demo: [https://note-platform-seven.vercel.app](https://note-platform-seven.vercel.app)
+
+📱 Download Installer: [https://github.com/Susie0306/xiji-notes/releases](https://github.com/Susie0306/xiji-notes/releases)
 
 ### Prerequisites
 
@@ -143,8 +190,8 @@ To improve code reusability and maintainability, we stripped the core editor fun
 1. **Clone the Project**
 
    ```bash
-   git clone https://github.com/your-username/note-platform.git
-   cd note-platform
+   git clone https://github.com/Susie0306/xiji-notes.git
+   cd xiji-notes
    ```
 
 2. **Install Dependencies**
@@ -194,26 +241,11 @@ Open [http://localhost:3000](http://localhost:3000) to access.
 
 ```
 ├── app/                    # Next.js App Router routes & pages
-│   ├── actions/            # Server Actions (Backend logic)
-│   ├── api/                # Route Handlers
-│   └── notes/              # Note list & details pages
 ├── components/             # React components
-│   ├── editor/             # Plate editor core logic
-│   ├── ui/                 # Shadcn UI base components
-│   └── ...
 ├── lib/                    # Utilities & configuration
-│   ├── indexeddb.ts        # Local database & sync queue logic
-│   ├── prisma.ts           # Database client
-│   └── types.ts            # Global type definitions
 ├── packages/               # Monorepo packages
 │   └── editor/             # @susie/editor standalone package
-│       ├── src/
-│       │   ├── kits/       # Feature modules (58 independent)
-│       │   ├── components/ # UI components
-│       │   └── collaborative/ # Collaborative modules
-│       └── dist/           # Build output
-├── prisma/                 # Database Schema
-└── public/                 # Static assets
+└── prisma/                 # Database Schema
 ```
 
 ## 🤝 Contribution
